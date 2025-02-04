@@ -35,3 +35,27 @@ Moneo follows an **Agile development** methodology, ensuring iterative updates a
 ```bash
 git clone https://github.com/your-username/moneo.git
 cd moneo
+````
+
+### **2️⃣ Install Dependencies
+```bash
+npm install
+cd client && npm install
+```
+
+### **3️⃣ Configure Environment Variables
+Create a .env file and set up your API keys and database connection:
+```bash
+MONGO_URI=your-mongodb-uri
+ALPHA_VANTAGE_API_KEY=your-api-key
+JWT_SECRET=your-secret-key
+```
+### **4️⃣ Run the Application
+```bash
+# Run backend server
+npm run server
+
+
+# Run frontend
+cd client && npm start
+```
