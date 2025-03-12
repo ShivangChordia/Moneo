@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -8,6 +8,15 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard"); // Redirect if user is logged in
+    }
+  }, [navigate]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -19,11 +28,11 @@ const Signup = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", {
+      await axios.post(`${API_URL}/api/auth/signup`, {
         email,
         password,
       });
-      navigate("/login");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed. Try again.");
     }
