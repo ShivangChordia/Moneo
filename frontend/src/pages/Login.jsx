@@ -8,7 +8,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_BACKEND_URL;
+  const API_URL = "https://moneo.vercel.app";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
