@@ -13,6 +13,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://moneo-frontend.vercel.app",
   "https://moneo.live",
+  "https://www.moneo.live",
 ];
 
 app.use(
