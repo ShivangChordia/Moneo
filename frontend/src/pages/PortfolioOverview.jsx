@@ -15,46 +15,43 @@ const PortfolioOverview = () => {
   const [percentageChange, setPercentageChange] = useState(0);
   const [assetAllocation, setAssetAllocation] = useState({});
   const [historicalData, setHistoricalData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [newStock, setNewStock] = useState("");
   const [error, setError] = useState("");
-  
-// ✅ UseEffect for Portfolio Data
-useEffect(() => {
+
+  useEffect(() => {
     const fetchPortfolioData = async () => {
       try {
         let totalValue = 0;
         let allocation = {};
-  
+
         const responses = await Promise.all(
           symbols.map((symbol) =>
             fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`)
           )
         );
-  
+
         const results = await Promise.all(responses.map((res) => res.json()));
-  
+
         results.forEach((data, index) => {
           if (data.c) {
             totalValue += data.c;
             allocation[symbols[index]] = data.c;
           }
         });
-  
+
         setPortfolioValue(totalValue);
         setAssetAllocation(allocation);
-  
-        // ✅ Calculate Percentage Change
-        if (totalValue > 0) {
-          const previousClose = Object.values(assetAllocation)[0] || 0;
-          const change = ((totalValue - previousClose) / previousClose) * 100;
-          setPercentageChange(change.toFixed(2));
-        }
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
+        setLoading(false);
       }
     };
-  
+
     fetchPortfolioData();
+    const interval = setInterval(fetchPortfolioData, 30000);
+    return () => clearInterval(interval);
   }, [symbols]);
 
   // ✅ Fetch historical data for Line Graph
@@ -81,7 +78,7 @@ useEffect(() => {
     fetchHistoricalData();
   }, []);
 
-  // ✅ Function to Add a New Stock
+  // ✅ Function to Validate and Add a New Stock
   const addStock = async () => {
     const stockSymbol = newStock.toUpperCase().trim();
 
@@ -129,7 +126,7 @@ useEffect(() => {
     <div className="bg-gray-800 p-6 rounded-lg shadow-md text-white">
       <h2 className="text-2xl font-bold mb-4">Portfolio Overview</h2>
 
-      {/* ✅ Stock Search Input */}
+      {/* ✅ Enhanced Search Bar & Add Button */}
       <div className="flex items-center gap-3">
         <input
           type="text"
@@ -149,7 +146,7 @@ useEffect(() => {
       {/* ✅ Show Error Message if Invalid */}
       {error && <p className="text-red-400 mt-2">{error}</p>}
 
-      {/* ✅ Stock List Display with Remove Button */}
+      {/* ✅ Stock List with Remove Option */}
       <div className="mt-4">
         <h3 className="text-lg font-semibold">Your Stocks:</h3>
         <ul>
@@ -167,13 +164,17 @@ useEffect(() => {
         </ul>
       </div>
 
-      {/* ✅ Portfolio Value Display */}
-      <p className="text-lg mt-4">
-        Total Portfolio Value: ${portfolioValue.toFixed(2)}{" "}
-        <span className={`ml-2 text-lg ${percentageChange >= 0 ? "text-green-400" : "text-red-400"}`}>
-          {percentageChange >= 0 ? `▲ +${percentageChange}%` : `▼ ${percentageChange}%`}
-        </span>
-      </p>
+      {/* ✅ Show Loading State */}
+      {loading ? (
+        <p className="text-lg text-gray-400 mt-4">Fetching latest stock data...</p>
+      ) : (
+        <p className="text-lg mt-4">
+          Total Portfolio Value: ${portfolioValue.toFixed(2)}{" "}
+          <span className={`ml-2 text-lg ${percentageChange >= 0 ? "text-green-400" : "text-red-400"}`}>
+            {percentageChange >= 0 ? `▲ +${percentageChange}%` : `▼ ${percentageChange}%`}
+          </span>
+        </p>
+      )}
 
       {/* ✅ Pie Chart */}
       <div className="mt-4 flex justify-center">
@@ -188,6 +189,12 @@ useEffect(() => {
                   hoverBackgroundColor: ["#FF4365", "#2582CC", "#FFB400"],
                 },
               ],
+            }}
+            options={{
+              plugins: {
+                legend: { position: "top", labels: { color: "#FFFFFF" } },
+                tooltip: { enabled: true },
+              },
             }}
           />
         </div>
