@@ -4,11 +4,9 @@ import { Pie, Line } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
 
-// API Keys (Stored in .env)
 const FINNHUB_API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
 const ALPHA_API_KEY = import.meta.env.VITE_ALPHA_VANTAGE_API_KEY;
 
-// Example portfolio assets
 const symbols = ["AAPL", "TSLA", "BTC-USD"];
 
 const PortfolioOverview = () => {
@@ -22,7 +20,6 @@ const PortfolioOverview = () => {
         let totalValue = 0;
         let allocation = {};
 
-        // Fetch real-time prices from Finnhub
         for (const symbol of symbols) {
           const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`);
           const data = await response.json();
@@ -51,14 +48,13 @@ const PortfolioOverview = () => {
             date,
             value: parseFloat(price["4. close"]),
           }));
-          setHistoricalData(historical.reverse()); // Reverse to get oldest first
+          setHistoricalData(historical.reverse()); 
         }
       } catch (error) {
         console.error("Error fetching historical data:", error);
       }
     };
 
-    // Fetch all data
     fetchPortfolioData();
     fetchHistoricalData();
   }, []);
@@ -68,22 +64,31 @@ const PortfolioOverview = () => {
       <h2 className="text-2xl font-bold">Portfolio Overview</h2>
       <p className="text-lg">Total Portfolio Value: ${portfolioValue.toFixed(2)}</p>
 
-      {/* Pie Chart for Asset Allocation */}
-      <div className="mt-4 w-1/2 mx-auto">
-        <Pie
-          data={{
-            labels: Object.keys(assetAllocation),
-            datasets: [
-              {
-                data: Object.values(assetAllocation),
-                backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+      {/* ✅ Pie Chart: Smaller Size & Interactivity */}
+      <div className="mt-4 flex justify-center">
+        <div style={{ width: "400px", height: "400px" }}>
+          <Pie
+            data={{
+              labels: Object.keys(assetAllocation),
+              datasets: [
+                {
+                  data: Object.values(assetAllocation),
+                  backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+                  hoverBackgroundColor: ["#FF4365", "#2582CC", "#FFB400"],
+                },
+              ],
+            }}
+            options={{
+              plugins: {
+                legend: { position: "top", labels: { color: "#FFFFFF" } },
+                tooltip: { enabled: true },
               },
-            ],
-          }}
-        />
+            }}
+          />
+        </div>
       </div>
 
-      {/* Line Chart for Portfolio Growth */}
+      {/* ✅ Line Chart: Improved Readability */}
       <div className="mt-6">
         <Line
           data={{
@@ -93,9 +98,20 @@ const PortfolioOverview = () => {
                 label: "Portfolio Value Over Time",
                 data: historicalData.map((entry) => entry.value),
                 borderColor: "#4BC0C0",
-                fill: false,
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: true,
+                tension: 0.4, // Makes the line smoother
               },
             ],
+          }}
+          options={{
+            scales: {
+              x: { ticks: { color: "#FFFFFF" } },
+              y: { ticks: { color: "#FFFFFF" } },
+            },
+            plugins: {
+              legend: { labels: { color: "#FFFFFF" } },
+            },
           }}
         />
       </div>
