@@ -17,36 +17,43 @@ const PortfolioOverview = () => {
   const [historicalData, setHistoricalData] = useState([]);
   const [newStock, setNewStock] = useState("");
   const [error, setError] = useState("");
-
-  // ✅ Fetch Portfolio Data
-  useEffect(() => {
+  
+// ✅ UseEffect for Portfolio Data
+useEffect(() => {
     const fetchPortfolioData = async () => {
       try {
         let totalValue = 0;
         let allocation = {};
-
+  
         const responses = await Promise.all(
           symbols.map((symbol) =>
             fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`)
           )
         );
-
+  
         const results = await Promise.all(responses.map((res) => res.json()));
-
+  
         results.forEach((data, index) => {
           if (data.c) {
             totalValue += data.c;
             allocation[symbols[index]] = data.c;
           }
         });
-
+  
         setPortfolioValue(totalValue);
         setAssetAllocation(allocation);
+  
+        // ✅ Calculate Percentage Change
+        if (totalValue > 0) {
+          const previousClose = Object.values(assetAllocation)[0] || 0;
+          const change = ((totalValue - previousClose) / previousClose) * 100;
+          setPercentageChange(change.toFixed(2));
+        }
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
       }
     };
-
+  
     fetchPortfolioData();
   }, [symbols]);
 
