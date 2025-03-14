@@ -24,7 +24,7 @@ const LandingPage = () => {
           </p>
           <div className="mt-6 flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
             <Link to="/signup">
-              <button className="bg-black px-6 py-3 rounded-lg text-white hover:bg-gray-800 transition">
+              <button className="bg-white px-6 py-3 rounded-lg text-black hover:bg-gray-800 transition">
                 Get Started
               </button>
             </Link>
