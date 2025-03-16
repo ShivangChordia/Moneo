@@ -1,24 +1,29 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import Navbar from "./Navbar";
+import PortfolioOverview from "./PortfolioOverview";
+import InvestmentList from "./InvestmentList";
+import RecentTransactions from "./RecentTransactions";
+import QuickActions from "./QuickActions";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+  const [darkMode, setDarkMode] = useState(true);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-      <h1 className="text-4xl font-bold">Welcome to Your Dashboard</h1>
-      <p className="mt-4">You are logged in!</p>
-      <button
-        onClick={handleLogout}
-        className="mt-6 bg-red-500 px-6 py-3 rounded-lg"
-      >
-        Logout
-      </button>
+    <div className={darkMode ? "min-h-screen bg-gray-900 text-white" : "min-h-screen bg-white text-gray-900"}>
+      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+      <div className="container mx-auto p-6">
+        {/* Portfolio Overview Section */}
+        <PortfolioOverview />
+
+        {/* Investment List Section */}
+        <InvestmentList />
+
+        {/* Recent Transactions Section */}
+        <RecentTransactions />
+
+        {/* Quick Actions Section */}
+        <QuickActions />
+      </div>
     </div>
   );
 };

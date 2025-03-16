@@ -17,12 +17,14 @@ const LandingPage = () => {
   }, [navigate]);
 
   return (
+
     <div className="bg-gray-900 text-white min-h-screen flex flex-col">
       {/* Main Content */}
       <div className="flex-grow">
         <HeroSection />
         <FeaturesSection />
         <CallToActionSection />
+
       </div>
 
       {/* Footer */}
