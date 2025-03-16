@@ -1,0 +1,28 @@
+.custom-footer {
+  background-color: #ffffff;
+  color: #4b5563;
+  padding: 1.5rem 0;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 2rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.footer-logo {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.footer-text {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+footer a:hover {
+  color: #000; /* On hover, links become black */
+}
