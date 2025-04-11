@@ -33,38 +33,38 @@ app.use(
 
 app.use(express.json());
 
-/**
- * 🌟 TEMPORARY FIX: Manually set CORS headers for all responses
- */
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // TEMP FIX - Allows all origins
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  next();
-});
-
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// 🔹 **USER MODEL (Moved Inside server.js)**
+// USER MODEL
 const userSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
   password: String,
 });
-
 const User = mongoose.model("User", userSchema);
 
-// ✅ **Test Route**
+// WATCHLIST MODEL
+const watchlistSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  symbols: [{ type: String }],
+});
+const Watchlist = mongoose.model("Watchlist", watchlistSchema);
+
+// JWT Middleware
+const verifyToken = require("./middleware/authMiddleware");
+
+// ROUTES
+// Test Route
 app.get("/", (req, res) => {
-  res.status(200).send("✅ Moneo API is Running on Vercel!");
+  res.status(200).send("Moneo API is Running on Vercel!");
 });
 
-// ✅ **AUTH ROUTES (Merged from authRoutes.js)**
-// 🔹 Register a new user
+// AUTH ROUTES 
+// Register a new user
 app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -86,7 +86,7 @@ app.post("/api/auth/signup", async (req, res) => {
   }
 });
 
-// 🔹 Login Route
+// Login Route
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -114,8 +114,8 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-// ✅ **Start Server**
+// Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 module.exports = app;
