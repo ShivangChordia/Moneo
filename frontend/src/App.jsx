@@ -1,3 +1,12 @@
+/*
+* FILE : App.jsx
+* PROJECT : Moneo
+* PROGRAMMER : Group 6
+* FIRST VERSION : 14/03/2025
+* DESCRIPTION :
+* This code sets up the app’s navigation, showing different pages based on the URL and protecting some routes for logged-in users only
+*/
+
 import React from "react";
 import {
   BrowserRouter as Router,

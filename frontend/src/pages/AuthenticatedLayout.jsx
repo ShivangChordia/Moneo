@@ -1,3 +1,11 @@
+/*
+* FILE : AuthenticatedLayout.jsx
+* PROJECT : Moneo
+* PROGRAMMER : Group 6
+* FIRST VERSION : 14/03/2025
+* DESCRIPTION :
+* This component wraps protected pages with a sidebar and styled main content layout for logged-in users.
+*/
 import Sidebar from "../components/Sidebar";
 
 const AuthenticatedLayout = ({ children }) => {

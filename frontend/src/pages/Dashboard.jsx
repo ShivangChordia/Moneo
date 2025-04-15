@@ -1,3 +1,13 @@
+/*
+* FILE : Dashboard.jsx
+* PROJECT : Moneo
+* PROGRAMMER : Group 6
+* FIRST VERSION : 14/03/2025
+* DESCRIPTION :
+* This Dashboard component displays real-time stock prices, simulates buying/selling, 
+* shows investment tips, and manages user portfolio actions for logged-in users.
+*/
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
