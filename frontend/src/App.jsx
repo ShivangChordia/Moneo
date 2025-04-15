@@ -1,11 +1,11 @@
 /*
-* FILE : App.jsx
-* PROJECT : Moneo
-* PROGRAMMER : Group 6
-* FIRST VERSION : 14/03/2025
-* DESCRIPTION :
-* This code sets up the app’s navigation, showing different pages based on the URL and protecting some routes for logged-in users only
-*/
+ * FILE : App.jsx
+ * PROJECT : Moneo
+ * PROGRAMMER : Group 6
+ * FIRST VERSION : 14/03/2025
+ * DESCRIPTION :
+ * This code sets up the app’s navigation, showing different pages based on the URL and protecting some routes for logged-in users only
+ */
 
 import React from "react";
 import {
@@ -21,8 +21,8 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import PortfolioOverview from "./pages/PortfolioOverview.jsx";
 import PrivateRoute from "./components/PrivateRoute";
-import AuthenticatedLayout from "./pages/AuthenticatedLayout"; 
-import Profile from "./pages/Profile"; 
+import AuthenticatedLayout from "./pages/AuthenticatedLayout";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -57,7 +57,7 @@ function App() {
         />
 
         <Route path="/profile" element={<Profile />} />
-        
+
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
