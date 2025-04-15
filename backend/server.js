@@ -5,6 +5,13 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const verifyToken = require("./middleware/authMiddleware");
+const stockRoutes = require("./routes/stock.routes");
+const purchaseRoutes = require("./routes/purchase.routes");
+
+const User = require("./models/User");
+const Watchlist = require("./models/Watchlist");
+
 const app = express();
 
 // Allow CORS for both local dev and deployed frontend
@@ -39,32 +46,12 @@ mongoose
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// USER MODEL
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-});
-const User = mongoose.model("User", userSchema);
-
-// WATCHLIST MODEL
-const watchlistSchema = new mongoose.Schema({
-  userId: { type: String, required: true },
-  symbols: [{ type: String }],
-});
-const Watchlist = mongoose.model("Watchlist", watchlistSchema);
-
-// JWT Middleware
-const verifyToken = require("./middleware/authMiddleware");
-
-// ROUTES
 // Test Route
 app.get("/", (req, res) => {
   res.status(200).send("Moneo API is Running on Vercel!");
 });
 
 // AUTH ROUTES
-// Register
 app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -88,18 +75,16 @@ app.post("/api/auth/signup", async (req, res) => {
   }
 });
 
-// Login
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const { _id, name } = user;
-
     const token = jwt.sign({ id: _id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -110,10 +95,9 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-// Get User Profile
 app.get("/api/auth/profile", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password"); // exclude password
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -161,11 +145,12 @@ app.delete("/api/watchlist/:symbol", verifyToken, async (req, res) => {
   }
 });
 
+// External Routes
 app.use("/api/stock", stockRoutes);
 app.use("/api/purchase", purchaseRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 module.exports = app;
