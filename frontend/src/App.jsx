@@ -22,7 +22,7 @@ import Dashboard from "./pages/Dashboard";
 import PortfolioOverview from "./pages/PortfolioOverview.jsx";
 import PrivateRoute from "./components/PrivateRoute";
 import AuthenticatedLayout from "./pages/AuthenticatedLayout";
-import Profile from "./pages/Profile";
+import Profile from "./pages/profile.jsx";
 
 function App() {
   return (
