@@ -63,56 +63,106 @@ app.get("/", (req, res) => {
   res.status(200).send("Moneo API is Running on Vercel!");
 });
 
-// AUTH ROUTES 
-// Register a new user
+// AUTH ROUTES
+// Register
 app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    if (existingUser)
       return res.status(400).json({ message: "User already exists" });
-    }
 
-    // Hash the password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashedPassword });
-
     await newUser.save();
-    res.status(201).json({ message: "User registered successfully" });
+
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.status(201).json({
+      token,
+      user: { _id: newUser._id, name: newUser.name, email: newUser.email },
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// Login Route
+// Login
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const user = await User.findOne({ email });
-    if (!user) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    const { _id, name } = user;
 
-    // Generate JWT Token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: _id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ token, user });
+    res.status(200).json({ token, user: { _id, name, email } });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+// Get User Profile
+app.get("/api/auth/profile", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password"); // exclude password
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch profile", error });
+  }
+});
+
+// Watchlist Routes
+app.post("/api/watchlist", verifyToken, async (req, res) => {
+  const userId = req.user.id;
+  const { symbol } = req.body;
+
+  try {
+    let watchlist = await Watchlist.findOne({ userId });
+    if (!watchlist) watchlist = new Watchlist({ userId, symbols: [] });
+
+    if (!watchlist.symbols.includes(symbol)) {
+      watchlist.symbols.push(symbol);
+      await watchlist.save();
+    }
+
+    res.json(watchlist.symbols);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating watchlist" });
+  }
+});
+
+app.delete("/api/watchlist/:symbol", verifyToken, async (req, res) => {
+  const userId = req.user.id;
+  const { symbol } = req.params;
+
+  try {
+    let watchlist = await Watchlist.findOne({ userId });
+    if (watchlist) {
+      watchlist.symbols = watchlist.symbols.filter((s) => s !== symbol);
+      await watchlist.save();
+    }
+
+    res.json(watchlist.symbols);
+  } catch (err) {
+    res.status(500).json({ message: "Error removing from watchlist" });
+  }
+});
+
+app.use("/api/stock", stockRoutes);
+app.use("/api/purchase", purchaseRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
