@@ -8,8 +8,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const API_URL = "https://moneo.vercel.app";
-
+  const API_URL = "https://moneo.vercel.app"; 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -27,6 +26,7 @@ const Login = () => {
         password,
       });
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       navigate("/dashboard");
     } catch (err) {
       setError(

@@ -5,11 +5,15 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import PortfolioOverview from "./pages/PortfolioOverview.jsx";
 import PrivateRoute from "./components/PrivateRoute";
+import AuthenticatedLayout from "./pages/AuthenticatedLayout"; 
+import Profile from "./pages/Profile"; 
 
 function App() {
   return (
@@ -20,17 +24,32 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Protected Route (Dashboard) */}
+        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              <AuthenticatedLayout>
+                <Dashboard />
+              </AuthenticatedLayout>
             </PrivateRoute>
           }
         />
 
-        {/* Redirect unknown routes */}
+        <Route
+          path="/portfolio"
+          element={
+            <PrivateRoute>
+              <AuthenticatedLayout>
+                <PortfolioOverview />
+              </AuthenticatedLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/profile" element={<Profile />} />
+        
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

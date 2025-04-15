@@ -1,0 +1,77 @@
+/* Sidebar.css */
+
+/* Burger icon positioning */
+.bm-burger-button {
+  position: fixed;
+  width: 30px;
+  height: 24px;
+  left: 20px;
+  top: 20px;
+  z-index: 1000; /* Ensures it’s always on top */
+}
+
+/* Burger icon bars (the 3 lines) */
+.bm-burger-bars {
+  background: #ffffff; /* White for visibility on dark background */
+}
+
+/* Hover effect for burger bars */
+.bm-burger-bars-hover {
+  background: #cccccc;
+}
+
+/* Cross button size & color (for close icon) */
+.bm-cross-button {
+  height: 24px;
+  width: 24px;
+}
+
+.bm-cross {
+  background: #ffffff;
+}
+
+/* Menu background and padding */
+.bm-menu {
+  background: #1f2937; /* Tailwind's gray-800 */
+  padding: 2.5em 1.5em 0;
+  font-size: 1.15em;
+}
+
+/* Container for the morph shape */
+.bm-morph-shape {
+  fill: #1f2937;
+}
+
+/* Wrapper for menu items */
+.bm-item-list {
+  color: #ffffff;
+  padding: 0.8em;
+}
+
+/* Individual menu item link */
+.menu-item {
+  display: block;
+  padding: 0.5em 0;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background 0.2s ease-in-out;
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Overlay that darkens the main content */
+.bm-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Push effect requirements */
+#outer-container {
+  height: 100%;
+}
+
+#page-wrap {
+  transition: all 0.5s ease;
+  position: relative;
+}

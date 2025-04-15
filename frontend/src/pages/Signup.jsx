@@ -3,18 +3,19 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const [name, setName] = useState(""); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const API_URL = "https://moneo.vercel.app";
-
+  const API_URL = "https://moneo.vercel.app"; 
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      navigate("/dashboard"); // Redirect if user is logged in
+      navigate("/dashboard");
     }
   }, [navigate]);
 
@@ -28,10 +29,14 @@ const Signup = () => {
     }
 
     try {
-      await axios.post(`${API_URL}/api/auth/signup`, {
+      const res = await axios.post(`${API_URL}/api/auth/signup`, {
+        name,
         email,
         password,
       });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed. Try again.");
@@ -51,7 +56,17 @@ const Signup = () => {
           {error && <p className="text-red-500 text-center mt-2">{error}</p>}
 
           <form onSubmit={handleSignup} className="mt-6">
-            <label className="block text-gray-600">Email</label>
+            <label className="block text-gray-600">Name</label>
+            <input
+              type="text"
+              placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full px-4 py-2 border rounded-lg mt-2"
+            />
+
+            <label className="block text-gray-600 mt-4">Email</label>
             <input
               type="email"
               placeholder="m@example.com"
