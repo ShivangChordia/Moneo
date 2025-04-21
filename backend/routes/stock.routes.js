@@ -3,33 +3,35 @@ const router = express.Router();
 const axios = require("axios");
 const verifyToken = require("../middleware/authMiddleware");
 
-const EODHD_API_KEY = process.env.EODHD_API_KEY;
+const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY;
 
 router.get("/:symbol", verifyToken, async (req, res) => {
   const { symbol } = req.params;
-  const formattedSymbol = symbol.includes(".") ? symbol : `${symbol.toUpperCase()}.US`;
+  const formattedSymbol = symbol.toUpperCase();
 
-  const url = `https://eodhd.com/api/fundamentals/${formattedSymbol}?api_token=${FINNHUB_API_KEY}&fmt=json`;
+  const url = `https://finnhub.io/api/v1/quote?symbol=${formattedSymbol}&token=${FINNHUB_API_KEY}`;
 
   try {
     const response = await axios.get(url);
     const data = response.data;
 
-    if (!data || !data.General || !data.Highlights) {
-      return res.status(404).json({ message: `No data found for ${formattedSymbol}` });
+    if (!data || !data.c) {
+      return res.status(404).json({ message: `No price data found for ${formattedSymbol}` });
     }
 
     const result = {
-      symbol: data.General.Code,
-      name: data.General.Name,
-      currency: data.General.CurrencyCode,
-      lastPrice: data.Highlights.Close || data.Highlights.PreviousClose || 0,
+      symbol: formattedSymbol,
+      lastPrice: data.c,      // current price
+      high: data.h,
+      low: data.l,
+      open: data.o,
+      previousClose: data.pc,
     };
 
     res.json(result);
   } catch (error) {
-    console.error("❌ EODHD API error:", error.message);
-    res.status(404).json({ message: `Failed to fetch data for ${formattedSymbol}` });
+    console.error("❌ Finnhub API error:", error.message);
+    res.status(500).json({ message: `Failed to fetch data for ${formattedSymbol}` });
   }
 });
 
