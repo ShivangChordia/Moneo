@@ -21,6 +21,7 @@ const allowedOrigins = [
   "https://moneo-frontend.vercel.app",
   "https://moneo.live",
   "https://www.moneo.live",
+  "https://moneo.vercel.app",
 ];
 
 app.use(
