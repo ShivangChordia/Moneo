@@ -9,30 +9,33 @@ router.get("/:symbol", verifyToken, async (req, res) => {
   const { symbol } = req.params;
   const formattedSymbol = symbol.toUpperCase();
 
-  const url = `https://finnhub.io/api/v1/quote?symbol=${formattedSymbol}&token=${FINNHUB_API_KEY}`;
+  console.log("📥 Received symbol:", symbol);
+  console.log("🔁 Fetching from Finnhub:", `https://finnhub.io/api/v1/quote?symbol=${formattedSymbol}&token=${FINNHUB_API_KEY}`);
 
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${formattedSymbol}&token=${FINNHUB_API_KEY}`);
     const data = response.data;
 
-    if (!data || !data.c) {
+    console.log("✅ Finnhub data:", data);
+
+    if (!data || typeof data.c !== "number") {
+      console.warn("⚠️ Invalid data format for:", formattedSymbol);
       return res.status(404).json({ message: `No price data found for ${formattedSymbol}` });
     }
 
-    const result = {
+    res.json({
       symbol: formattedSymbol,
-      lastPrice: data.c,      // current price
+      lastPrice: data.c,
       high: data.h,
       low: data.l,
       open: data.o,
       previousClose: data.pc,
-    };
-
-    res.json(result);
+    });
   } catch (error) {
     console.error("❌ Finnhub API error:", error.message);
     res.status(500).json({ message: `Failed to fetch data for ${formattedSymbol}` });
   }
 });
+
 
 module.exports = router;
