@@ -4,7 +4,7 @@ const Purchase = require("../models/purchase.model");
 const verifyToken = require("../middleware/authMiddleware");
 
 // POST: Simulate buying a stock
-router.post("/api/purchase", verifyToken, async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const { symbol, quantity, priceAtPurchase } = req.body;
   try {
     const purchase = new Purchase({
@@ -21,7 +21,7 @@ router.post("/api/purchase", verifyToken, async (req, res) => {
 });
 
 // GET: All user's purchases
-router.get("/api/purchase", verifyToken, async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   try {
     const purchases = await Purchase.find({ userId: req.user.id });
     res.status(200).json(purchases);
@@ -31,7 +31,7 @@ router.get("/api/purchase", verifyToken, async (req, res) => {
 });
 
 // DELETE: Simulate selling/removing purchase
-router.delete("/api/purchase/:id", verifyToken, async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
   try {
     await Purchase.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Purchase deleted" });
