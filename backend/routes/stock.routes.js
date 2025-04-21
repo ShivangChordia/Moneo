@@ -9,7 +9,7 @@ router.get("/:symbol", verifyToken, async (req, res) => {
   const { symbol } = req.params;
   const formattedSymbol = symbol.includes(".") ? symbol : `${symbol.toUpperCase()}.US`;
 
-  const url = `https://eodhd.com/api/fundamentals/${formattedSymbol}?api_token=${EODHD_API_KEY}&fmt=json`;
+  const url = `https://eodhd.com/api/fundamentals/${formattedSymbol}?api_token=${FINNHUB_API_KEY}&fmt=json`;
 
   try {
     const response = await axios.get(url);
